@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import { MarkdownCMD } from 'ds-markdown';
+import { MarkdownCMD, ConfigProvider } from 'ds-markdown';
 import type { MarkdownCMDRef } from 'ds-markdown';
 import { katexPlugin } from 'ds-markdown/plugins';
-import 'ds-markdown/style.css';
+import en from 'ds-markdown/i18n/en';
 const App: React.FC<{
   theme: 'light' | 'dark';
   setTheme: (theme: 'light' | 'dark') => void;
@@ -10,37 +10,37 @@ const App: React.FC<{
   const markdownRef = useRef<MarkdownCMDRef>(null);
   const [mathOpen, setMathOpen] = useState(true);
 
-  // 模拟 AI 流式响应
+  // Simulate AI streaming response
   const simulateAIResponse = async () => {
     markdownRef.current?.clear();
 
-    // 思考阶段
-    markdownRef.current?.push('🤔 正在分析您的问题...', 'thinking');
+    // Thinking stage
+    markdownRef.current?.push('🤔 Analyzing your question...', 'thinking');
     await delay(1000);
-    markdownRef.current?.push('\n\n✅ 分析完成，开始回答', 'thinking');
+    markdownRef.current?.push('\n\n✅ Analysis complete, starting to answer', 'thinking');
 
     // 流式回答
     const chunks = [
-      '# React 19 新特性解析\n\n',
+      '# React 19 New Features Explained\n\n',
       '## 🚀 React Compiler\n',
-      'React 19 最大的亮点是引入了 **React Compiler**：\n\n',
-      '- 🎯 **自动优化**：无需手动 memo 和 useMemo\n',
-      '- ⚡ **性能提升**：编译时优化，运行时零开销\n',
-      '- 🔧 **向后兼容**：现有代码无需修改\n\n',
-      '## 📝 Actions 简化表单\n',
-      '新的 Actions API 让表单处理变得更简单：\n\n',
+      'The biggest highlight of React 19 is the introduction of **React Compiler**:\n\n',
+      '- 🎯 **Automatic optimization**: no need for manual memo and useMemo\n',
+      '- ⚡ **Performance boost**: compile-time optimization with zero runtime overhead\n',
+      '- 🔧 **Backward compatibility**: no changes required for existing code\n\n',
+      '## 📝 Actions simplify forms\n',
+      'The new Actions API makes form handling much simpler:\n\n',
       '```tsx\n',
       'function ContactForm({ action }) {\n',
       '  const [state, formAction] = useActionState(action, null);\n',
       '  return (\n',
       '    <form action={formAction}>\n',
       '      <input name="email" type="email" />\n',
-      '      <button>提交</button>\n',
+      '      <button>Submit</button>\n',
       '    </form>\n',
       '  );\n',
       '}\n',
       '```\n\n',
-      '希望这个解答对您有帮助！🎉',
+      'Hope this answer is helpful to you! 🎉',
     ];
 
     for (const chunk of chunks) {
@@ -50,31 +50,32 @@ const App: React.FC<{
   };
 
   return (
+    <ConfigProvider locale={en}>
     <div className="chat-container">
       <div className="ds-message-actions">
-        <button onClick={simulateAIResponse}>🤖 询问 React 19 新特性</button>
+        <button onClick={simulateAIResponse}>🤖 Ask about React 19 new features</button>
 
         <button
           className="theme-btn"
           onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
         >
-          切换为{theme === 'light' ? '暗色' : '亮色'}
+          Switch to {theme === 'light' ? 'dark' : 'light'} mode
         </button>
         <button className="theme-btn" onClick={() => setMathOpen(!mathOpen)}>
-          {mathOpen ? '关闭' : '开启'}公式转换
+          {mathOpen ? 'Disable' : 'Enable'} formula rendering
         </button>
         <button
           className="theme-btn"
-          onClick={() => markdownRef.current.stop()}
+          onClick={() => markdownRef.current?.stop()}
         >
-          暂停
+          Pause
         </button>
 
         <button
           className="theme-btn"
-          onClick={() => markdownRef.current.resume()}
+          onClick={() => markdownRef.current?.resume()}
         >
-          继续
+          Resume
         </button>
       </div>
       <div className="ds-message-box">
@@ -85,11 +86,12 @@ const App: React.FC<{
             plugins={mathOpen ? [katexPlugin] : []}
             theme={theme}
             timerType="requestAnimationFrame"
-            onEnd={(data) => console.log('段落完成:', data)}
+            onEnd={(data) => console.log('Paragraph finished:', data)}
           />
         </div>
       </div>
     </div>
+    </ConfigProvider>
   );
 };
 
